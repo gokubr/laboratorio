@@ -1,0 +1,128 @@
+ RESUMO COMPLETO – Git + GitHub via SSH (Debian)
+1. Criar e configurar chave SSH para o GitHub
+Verificar se já existe uma chave:
+
+ls ~/.ssh/id_rsa.pub
+
+Gerar nova chave SSH (caso não exista):
+
+ssh-keygen -t rsa -b 4096 -C "seuemail@exemplo.com"
+
+    Quando pedir o local: só pressione Enter.
+
+    Você pode deixar a senha da chave em branco ou definir uma.
+
+Adicionar a chave ao ssh-agent:
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+
+Copiar a chave pública para adicionar no GitHub:
+
+cat ~/.ssh/id_rsa.pub
+
+Cole o conteúdo no GitHub:
+
+    GitHub > Settings > SSH and GPG keys > New SSH key
+
+2. Configurar identidade do Git (global)
+
+git config --global user.name "Seu Nome"
+git config --global user.email "seuemail@exemplo.com"
+
+Verificar:
+
+git config --global --list
+
+3. Iniciar um repositório local e conectar ao GitHub
+Acesse a pasta dos scripts:
+
+cd ~/laboratorio/automacao
+
+Inicializar Git:
+
+git init
+
+Criar .gitignore (opcional, recomendado):
+
+nano .gitignore
+
+Exemplo de conteúdo:
+
+*.log
+__pycache__/
+*.swp
+.env
+
+ 4. Criar repositório no GitHub
+
+    Vá em https://github.com
+
+    Clique em New repository
+
+    Nomeie (ex: automacao)
+
+    Não adicione README
+
+    Crie o repositório e copie o SSH URL, ex:
+
+git@github.com:seunome/automacao.git
+
+5. Conectar repositório local ao GitHub
+
+git remote add origin git@github.com:seunome/automacao.git
+
+Renomear o branch para main e fazer o primeiro push:
+
+git branch -M main
+git push -u origin main
+
+6. Fluxo diário – Enviar alterações para o GitHub
+Para todos os arquivos alterados:
+
+git add .
+git commit -m "Mensagem explicando a mudança"
+git push
+
+Para um único arquivo:
+
+git add nome-do-arquivo.extensao
+git commit -m "Mensagem descritiva da alteração"
+git push
+
+7. Comandos úteis
+Comando	Função
+
+git status	Mostra arquivos modificados e não adicionados
+git log --oneline	Mostra histórico resumido de commits
+git diff arquivo	Mostra as diferenças em um arquivo antes do commit
+git branch	Mostra em qual branch você está
+git remote -v	Mostra os repositórios remotos conectados
+git pull	Puxa atualizações do GitHub para seu repositório local
+
+8. Automatizar push com um script
+Criar script gitpush.sh:
+
+nano gitpush.sh
+
+Conteúdo:
+
+#!/bin/bash
+mensagem="$1"
+
+if [ -z "$mensagem" ]; then
+  echo "Uso: ./gitpush.sh 'mensagem do commit'"
+  exit 1
+fi
+
+git add .
+git commit -m "$mensagem"
+git push
+
+Tornar executável:
+
+chmod +x gitpush.sh
+
+Usar assim:
+
+./gitpush.sh "Atualização do script de backup"
